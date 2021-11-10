@@ -4,6 +4,7 @@ import MapScreen from './MapScreen'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import netInfoApi from './shared/api/netinfo'
 import * as Location from 'expo-location'
+import NetInfo from '@react-native-community/netinfo'
 
 const HomeScreen = ({ navigation }) => {
   const [netInfoData, setNetInfoData] = useState()
@@ -12,24 +13,29 @@ const HomeScreen = ({ navigation }) => {
   const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(async () => {
-    const result = await netInfoApi()
-    setNetInfoData(result)
+    console.log(await netInfoApi())
+    NetInfo.addEventListener((state) => {
+      setNetInfoData(state)
+    })
+
     let { status } = await Location.requestForegroundPermissionsAsync()
 
     if (status !== 'granted') {
       setErrorMessage('Permission to access location was denied')
       return
     }
-    let location = await Location.getCurrentPositionAsync({})
-    console.log(location)
-    setLocation(location)
+    await Location.watchPositionAsync(
+      { accuracy: Location.Accuracy.BestForNavigation },
+      (value) => {
+        setLocation(value)
+      }
+    )
   }, [])
 
   let text = 'Waiting...'
   if (errorMessage) {
     text = errorMessage
   } else if (location) {
-    console.log(location)
     text = JSON.stringify(location)
   }
 
