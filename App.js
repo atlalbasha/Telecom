@@ -7,6 +7,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import MapScreen from './src/screens/MapScreen'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import PingScreen from './src/screens/PingScreen'
 
 export default function App() {
   const Stack = createNativeStackNavigator()
@@ -29,6 +30,13 @@ export default function App() {
             }}
             name="Map"
             component={MapScreen}
+          />
+          <Tab.Screen
+            options={{
+              header: () => null
+            }}
+            name="Ping"
+            component={PingScreen}
           />
         </Tab.Navigator>
       </NavigationContainer>
