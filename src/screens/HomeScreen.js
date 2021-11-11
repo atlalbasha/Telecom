@@ -1,19 +1,20 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import MapScreen from './MapScreen'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import netInfoApi from './shared/api/netinfo'
 import * as Location from 'expo-location'
 import NetInfo from '@react-native-community/netinfo'
+import { DataProvider } from './shared/utils/DataContext'
+import { DataContext } from './shared/utils/DataContext'
 
 const HomeScreen = ({ navigation }) => {
+  const [data, setData] = useContext(DataContext)
   const [netInfoData, setNetInfoData] = useState()
-
   const [location, setLocation] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(async () => {
-    console.log(await netInfoApi())
     NetInfo.addEventListener((state) => {
       setNetInfoData(state)
     })
@@ -24,12 +25,12 @@ const HomeScreen = ({ navigation }) => {
       setErrorMessage('Permission to access location was denied')
       return
     }
-    await Location.watchPositionAsync(
-      { accuracy: Location.Accuracy.BestForNavigation },
-      (value) => {
-        setLocation(value)
-      }
-    )
+    const newLocation = await Location.getCurrentPositionAsync()
+    setLocation(newLocation)
+
+    if (location.coords.latitude !== location.coords.latitude) {
+      setData((data) => [...data, location])
+    }
   }, [])
 
   let text = 'Waiting...'
