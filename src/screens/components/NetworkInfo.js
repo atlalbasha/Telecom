@@ -26,7 +26,7 @@ const NetworkInfo = ({
               isConnected ? { color: "#74A57F" } : { color: "#db3a34" },
             ]}
           >
-            {isConnected}
+            {isConnected ? "Yes" : "No"}
           </Text>
         </View>
       </View>
@@ -41,7 +41,7 @@ const NetworkInfo = ({
               isInternetReachable ? { color: "#74A57F" } : { color: "#db3a34" },
             ]}
           >
-            {isInternetReachable}
+            {isInternetReachable ? "Yes" : "No"}
           </Text>
         </View>
       </View>
@@ -56,7 +56,7 @@ const NetworkInfo = ({
               isWifiEnabled ? { color: "#74A57F" } : { color: "#db3a34" },
             ]}
           >
-            {isWifiEnabled}
+            {isWifiEnabled ? "Yes" : "No"}
           </Text>
         </View>
       </View>
