@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Switch } from "react-native";
 import MapScreen from "./MapScreen";
 import { SafeAreaView } from "react-native-safe-area-context";
 import netInfoApi from "./shared/api/netinfo";
@@ -11,9 +11,12 @@ import LocationInfo from "./components/LocationInfo";
 
 const HomeScreen = ({ navigation }) => {
   const [netInfoData, setNetInfoData] = useState();
-
   const [location, setLocation] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+
+  //SWITCH
+  const [isEnabled, setIsEnabled] = useState(true);
+  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
   useEffect(async () => {
     console.log(await netInfoApi());
@@ -46,11 +49,19 @@ const HomeScreen = ({ navigation }) => {
     <SafeAreaView>
       <View style={styles.container}>
         <Text style={styles.textHeader}>TeleCom</Text>
+        <Switch
+          trackColor={{ false: "#767577", true: "#767577" }}
+          thumbColor={isEnabled ? "#74A57F" : "#f4f3f4"}
+          onValueChange={toggleSwitch}
+          value={isEnabled}
+        />
         <SignalInfo
+          isActive={isEnabled}
           strength={netInfoData?.details.strength}
           frequency={netInfoData?.details.frequency}
         />
         <NetworkInfo
+          isActive={isEnabled}
           type={netInfoData?.type}
           isConnected={netInfoData?.isConnected.toString()}
           isInternetReachable={netInfoData?.isInternetReachable.toString()}
@@ -60,6 +71,7 @@ const HomeScreen = ({ navigation }) => {
           subnet={netInfoData?.details.subnet}
         />
         <LocationInfo
+          isActive={isEnabled}
           latitude={location?.coords.latitude}
           longitude={location?.coords.longitude}
           accuracy={location?.coords.accuracy}

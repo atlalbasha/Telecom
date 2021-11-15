@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { BarChart, Grid } from "react-native-svg-charts";
 
-const SignalInfo = ({ strength, frequency }) => {
+const SignalInfo = ({ strength, frequency, isActive }) => {
   const color = "rgb(116, 165, 127)";
 
   const [data, setData] = useState([]);
