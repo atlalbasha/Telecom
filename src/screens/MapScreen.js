@@ -1,15 +1,16 @@
 import * as React from 'react'
-import MapView, { Callout, Heatmap, Marker } from 'react-native-maps'
+import MapView, { Callout, Heatmap } from 'react-native-maps'
 import { StyleSheet, View, Dimensions, Text } from 'react-native'
-import { Colors } from 'react-native/Libraries/NewAppScreen'
+import { DataContext } from './shared/utils/DataContext'
 
+import { useContext } from 'react'
 export default function App() {
-  const area = [
-    { latitude: 57.70887, longitude: 11.97456, weight: 2 },
-    { latitude: 58.283489, longitude: 12.285821, weight: 2 }
-  ]
-  const areaColors = ['blue', 'red', 'orange']
+  const [data, setData] = useContext(DataContext)
+
+  console.log(data)
+  const areaColors = ['green', 'yellow', 'orange']
   const startPoints = [0.01, 0.5, 0.75]
+
   return (
     <View style={styles.container}>
       <MapView
@@ -17,25 +18,15 @@ export default function App() {
         initialRegion={{
           latitude: 57.70887,
           longitude: 11.97456,
-          latitudeDelta: 0.05,
-          longitudeDelta: 0.01
+          latitudeDelta: 0.75,
+          longitudeDelta: 0.75
         }}
       >
         <Heatmap
-          points={area}
-          radius={20}
+          points={data}
+          radius={10}
           gradient={{ colors: areaColors, startPoints }}
         />
-        <Marker
-          coordinate={{
-            latitude: 57.70887,
-            longitude: 11.97456
-          }}
-        >
-          <Callout>
-            <Text>Gothenburg</Text>
-          </Callout>
-        </Marker>
       </MapView>
     </View>
   )
