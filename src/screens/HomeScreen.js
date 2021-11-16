@@ -1,81 +1,52 @@
-
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext } from "react";
 import { StyleSheet, Text, View, Switch } from "react-native";
-import MapScreen from "./MapScreen";
 import { SafeAreaView } from "react-native-safe-area-context";
-import netInfoApi from "./shared/api/netinfo";
 import * as Location from "expo-location";
 import NetInfo from "@react-native-community/netinfo";
 import SignalInfo from "./components/SignalInfo";
 import NetworkInfo from "./components/NetworkInfo";
 import LocationInfo from "./components/LocationInfo";
+import { DataContext } from "./shared/utils/DataContext";
 
-
-import { DataContext } from './shared/utils/DataContext'
-
-const HomeScreen = ({ navigation }) => {
-
-  const [data, setData] = useContext(DataContext)
-  const [netInfoData, setNetInfoData] = useState()
-  const [location, setLocation] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
-   //SWITCH
+const HomeScreen = () => {
+  const [data, setData] = useContext(DataContext);
+  const [netInfoData, setNetInfoData] = useState();
+  const [location, setLocation] = useState(null);
+  //SWITCH
   const [isEnabled, setIsEnabled] = useState(true);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
   useEffect(async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync()
+    let { status } = await Location.requestForegroundPermissionsAsync();
 
- 
- if (status !== "granted") {
+    if (status !== "granted") {
       setErrorMessage("Permission to access location was denied");
       return;
     }
- 
-
- 
-
-
-   
-
 
     NetInfo.addEventListener((state) => {
-      setNetInfoData(state)
-    })
+      setNetInfoData(state);
+    });
 
-    let asyncLocation = await Location.watchPositionAsync(
+    await Location.watchPositionAsync(
       {
         accuracy: Location.Accuracy.Highest,
         distanceInterval: 1,
-        timeInterval: 1000
+        timeInterval: 1000,
       },
       (loc) => {
-        setLocation(JSON.parse(JSON.stringify(loc.coords)))
+        setLocation(loc);
         setData((prevLocation) => [
           ...prevLocation,
           {
             longitude: loc.coords.longitude,
             latitude: loc.coords.latitude,
-            weight: 20
-          }
-        ])
+            weight: 20,
+          },
+        ]);
       }
-    )
-
-   
-  
-  }, [])
-
-   
- 
-
-
-  let text = "Waiting...";
-  if (errorMessage) {
-    text = errorMessage;
-  } else if (location) {
-    text = JSON.stringify(location);
-  }
+    );
+  }, []);
 
   return (
     <SafeAreaView>
