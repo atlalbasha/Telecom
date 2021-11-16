@@ -1,3 +1,4 @@
+
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -9,11 +10,16 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
+
+import { DataProvider } from './src/screens/shared/utils/DataContext'
+
 export default function App() {
   const Stack = createNativeStackNavigator();
 
   const Tab = createBottomTabNavigator();
   return (
+
+
     <SafeAreaProvider>
       <NavigationContainer>
         <Tab.Navigator
@@ -49,6 +55,7 @@ export default function App() {
       </NavigationContainer>
     </SafeAreaProvider>
   );
+
 }
 
 const styles = StyleSheet.create({});

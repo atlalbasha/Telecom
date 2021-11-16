@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect, useContext } from 'react'
 import { StyleSheet, Text, View, Switch } from "react-native";
 import MapScreen from "./MapScreen";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -9,34 +10,65 @@ import SignalInfo from "./components/SignalInfo";
 import NetworkInfo from "./components/NetworkInfo";
 import LocationInfo from "./components/LocationInfo";
 
-const HomeScreen = ({ navigation }) => {
-  const [netInfoData, setNetInfoData] = useState();
-  const [location, setLocation] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
 
-  //SWITCH
+import { DataContext } from './shared/utils/DataContext'
+
+const HomeScreen = ({ navigation }) => {
+
+  const [data, setData] = useContext(DataContext)
+  const [netInfoData, setNetInfoData] = useState()
+  const [location, setLocation] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
+   //SWITCH
   const [isEnabled, setIsEnabled] = useState(true);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
   useEffect(async () => {
-    console.log(await netInfoApi());
-    NetInfo.addEventListener((state) => {
-      setNetInfoData(state);
-    });
+    let { status } = await Location.requestForegroundPermissionsAsync()
 
-    let { status } = await Location.requestForegroundPermissionsAsync();
-
-    if (status !== "granted") {
+ 
+ if (status !== "granted") {
       setErrorMessage("Permission to access location was denied");
       return;
     }
-    await Location.watchPositionAsync(
-      { accuracy: Location.Accuracy.BestForNavigation },
-      (value) => {
-        setLocation(value);
+ 
+
+ 
+
+
+   
+
+
+    NetInfo.addEventListener((state) => {
+      setNetInfoData(state)
+    })
+
+    let asyncLocation = await Location.watchPositionAsync(
+      {
+        accuracy: Location.Accuracy.Highest,
+        distanceInterval: 1,
+        timeInterval: 1000
+      },
+      (loc) => {
+        setLocation(JSON.parse(JSON.stringify(loc.coords)))
+        setData((prevLocation) => [
+          ...prevLocation,
+          {
+            longitude: loc.coords.longitude,
+            latitude: loc.coords.latitude,
+            weight: 20
+          }
+        ])
       }
-    );
-  }, []);
+    )
+
+   
+  
+  }, [])
+
+   
+ 
+
 
   let text = "Waiting...";
   if (errorMessage) {
