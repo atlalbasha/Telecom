@@ -5,7 +5,9 @@ import axios from 'axios'
 
 export default function PingScreen() {
   const [result, setResult] = useState([])
-  const pingArray = useContext([])
+
+  //Kanske behöver använda att fylla array med requests eller sekunder det tar..
+  // const pingArray = useContext([])
 
   // Det ska kunna göras 3st ping request en gång alternativt kontinuerligt med följande interval: ​
   // 50ms, 100ms, 200ms, 500ms, 1000ms​
@@ -45,9 +47,9 @@ export default function PingScreen() {
   function getPing() {
     const searchApi = async () => {
       const response = await axios.get('https://www.google.se/')
-      setResult(response.data.jokes)
+      setResult(response.status)
+      console.log(result)
     }
-    console.log(result)
     searchApi()
   }
 }
