@@ -7,7 +7,7 @@ import { useContext } from 'react'
 export default function App() {
   const [data, setData] = useContext(DataContext)
 
-  console.log(data)
+  //console.log(data)
   const areaColors = ['green', 'yellow', 'orange']
   const startPoints = [0.01, 0.5, 0.75]
 
