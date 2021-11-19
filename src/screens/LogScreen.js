@@ -1,4 +1,4 @@
-import React, { useContext, useState, useCallback } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -6,13 +6,12 @@ import {
   Button,
   TextInput,
   FlatList,
-  TouchableOpacity,
+  Pressable,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DataContext } from "./shared/utils/DataContext";
 import { StorageAccessFramework } from "expo-file-system";
 import * as FileSystem from "expo-file-system";
-import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import getCurrentTime from "./shared/utils/currentTime";
 import CustomAlert from "./components/CustomAlert";
@@ -20,11 +19,20 @@ import ListItem from "./components/ListItem";
 
 const LogScreen = () => {
   const [locations, setData] = useContext(DataContext);
-  const [serverUrl, onChangeText] = useState(null);
+  const [serverUrl, onChangeText] = useState("");
   const [userDirectory, setUserDirectory] = useState(null);
   const [filesUri, setFilesUri] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
   const [uriToDelete, setUriToDelete] = useState(null);
+  const [canSend, setCanSend] = useState(false);
+
+  useEffect(() => {
+    if (serverUrl.length === 0) {
+      setCanSend(false);
+    } else {
+      setCanSend(true);
+    }
+  }, [serverUrl]);
 
   const getAllDocument = async () => {
     const tmp = [];
@@ -116,23 +124,37 @@ const LogScreen = () => {
     <SafeAreaView>
       <View style={styles.container}>
         <Text>Logs</Text>
-        <Button onPress={createUserDocument} title="Generate log file" />
-        <Button onPress={getAllDocument} title="Refresh" />
+
+        <Pressable style={styles.button} onPress={createUserDocument}>
+          <Text style={styles.buttonText}>Generate new log file</Text>
+        </Pressable>
+
+        <Pressable style={styles.button} onPress={getAllDocument}>
+          <Text style={styles.buttonText}>Refresh</Text>
+        </Pressable>
+
         <FlatList
           data={filesUri}
           renderItem={renderItem}
           keyExtractor={(item) => item.uri}
         />
-
         <TextInput
           style={styles.input}
           onChangeText={onChangeText}
           value={serverUrl}
-          placeholder="server address"
+          placeholder="https://"
           keyboardType="default"
         />
 
-        <Button onPress={uploadDocument} title="Upload log" />
+        <Pressable
+          disabled={!canSend}
+          style={canSend ? styles.button : styles.buttonDisabled}
+          onPress={uploadDocument}
+        >
+          <Text style={canSend ? styles.buttonText : styles.buttonTextDisabled}>
+            Upload log
+          </Text>
+        </Pressable>
 
         {/* CUSTOM ALERT */}
         <CustomAlert
@@ -158,26 +180,42 @@ const styles = StyleSheet.create({
     height: "100%",
     padding: 16,
   },
+
   input: {
     height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 8,
-    padding: 8,
     backgroundColor: "#3b4053",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderColor: "#3b4053",
+    borderWidth: 1,
     borderRadius: 8,
-  },
-  column: {
-    flexDirection: "column",
-  },
-  whiteText: {
     color: "white",
+    marginBottom: 8,
+  },
+
+  button: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 8,
+    elevation: 0,
+    backgroundColor: "#0496FF",
+  },
+  buttonDisabled: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 8,
+    elevation: 0,
+    backgroundColor: "#3B4053",
+  },
+  buttonText: {
+    color: "white",
+  },
+  buttonTextDisabled: {
+    color: "grey",
   },
 });
 
