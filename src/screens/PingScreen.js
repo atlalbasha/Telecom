@@ -16,26 +16,46 @@ export default function PingScreen() {
 
   const [text, onTextChange] = React.useState('')
 
-  const [counter, setCounter] = React.useState(300)
-  // Klockar ner från 5min måste integrera med ping koden  50ms, 100ms, 20ms, 500ms, 1000ms​
+  const [counter, setCounter] = React.useState(5)
+  // Klockar ner från 5msek måste integrera med ping koden  50ms, 100ms, 20ms, 500ms, 1000ms​
   useEffect(() => {
     const timer =
       counter > 0 && setInterval(() => setCounter(counter - 1), 1000)
+    getPing()
     return () => clearInterval(timer)
   }, [counter])
 
   // Det ska kunna göras 3st ping request en gång alternativt kontinuerligt med följande interval: ​
-  // 50ms, 100ms, 20ms, 500ms, 1000ms​
+  // 50ms, 100ms, 200ms, 500ms, 1000ms​
   // Lägga en if-sats och stoppa ifall number === tex 2000ms
 
   return (
-    <SafeAreaView>
-      <Text style={{ textAlign: 'center', fontSize: 20 }}>
-        I'm the ping screen
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#14213d' }}>
+      <Text
+        style={{
+          textAlign: 'center',
+          fontSize: 20,
+          fontWeight: 'bold',
+          color: 'white'
+        }}
+      >
+        Ping Screen
       </Text>
-      <Text>Countdown: {counter}</Text>
-      <Text style={styles.text}>Ping: {result}</Text>
-      <Text style={styles.text}>URL: {urlResult}</Text>
+      <Text style={{ color: 'grey' }}>Countdown: {counter}</Text>
+
+      {/* <FlatList
+          data={result}
+          renderItem={({ item }) => (
+            <View style={styles.item}>
+              <Text style={styles.text}>Type: Ping: {item}</Text>
+            </View>
+          )}
+          keyExtractor={(joke) => joke.id.toString()}
+        /> */}
+
+      <Text style={styles.text}>Ping Code: {result}</Text>
+      <Text style={styles.text}>URL Code: {urlResult}</Text>
+
       <TextInput
         style={styles.input}
         onChangeText={onTextChange}
@@ -60,6 +80,7 @@ export default function PingScreen() {
       <Pressable
         onPress={() => {
           getPing()
+          console.log('', result)
         }}
         style={({ pressed }) => [
           {
@@ -75,27 +96,23 @@ export default function PingScreen() {
 
   function getPing() {
     const searchApi = async () => {
-      const response = await axios.get('https://www.google.se/')
+      const response = await axios.get('https://www.amazon.com/')
       setResult(response.status)
-      console.log(result)
+      console.log('Ping result: ', result)
     }
     searchApi()
   }
   function getUrl(url) {
     const searchApi = async () => {
-      const response = await axios.get(url)
+      const response = await axios.get('https://' + url)
       setUrlResult(response.status)
-      console.log('URL resulr ', urlResult)
+      console.log('URL result ', urlResult)
     }
     searchApi()
   }
 }
 
 const styles = StyleSheet.create({
-  viewBackground: {
-    maxHeight: 50,
-    backgroundColor: '#F8F9FA'
-  },
   buttonText: {
     fontSize: 24,
     color: 'white',
@@ -114,14 +131,18 @@ const styles = StyleSheet.create({
     paddingBottom: 10
   },
   text: {
+    top: 10,
+    color: 'white',
     backgroundColor: '#0000',
-    fontSize: 15,
+    fontSize: 30,
+    fontStyle: 'italic',
+    fontWeight: 'bold',
     textAlign: 'center'
   },
   input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10
+    margin: 20,
+    borderWidth: 2,
+    padding: 20,
+    color: 'white'
   }
 })
