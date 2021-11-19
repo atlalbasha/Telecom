@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -12,37 +12,26 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { DataContext } from "./shared/utils/DataContext";
 import { StorageAccessFramework } from "expo-file-system";
 import * as FileSystem from "expo-file-system";
-import * as DocumentPicker from "expo-document-picker";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
+import getCurrentTime from "./shared/utils/currentTime";
+import CustomAlert from "./components/CustomAlert";
+import ListItem from "./components/ListItem";
 
 const LogScreen = () => {
   const [locations, setData] = useContext(DataContext);
   const [serverUrl, onChangeText] = useState(null);
   const [userDirectory, setUserDirectory] = useState(null);
   const [filesUri, setFilesUri] = useState([]);
-
-  function getCurrentTime() {
-    var date = new Date().getDate();
-    var month = new Date().getMonth() + 1;
-    var year = new Date().getFullYear();
-    var hours = new Date().getHours();
-    var min = new Date().getMinutes();
-    var sec = new Date().getSeconds();
-    return (
-      date + "-" + month + "-" + year + "-" + hours + "-" + min + "-" + sec
-    );
-  }
+  const [showAlert, setShowAlert] = useState(false);
+  const [uriToDelete, setUriToDelete] = useState(null);
 
   const getAllDocument = async () => {
     const tmp = [];
     const files = await StorageAccessFramework.readDirectoryAsync(
       userDirectory
     );
-
-    console.log(files.length);
     const filtered = files.filter((uri) => uri.includes("telecom-logs-"));
-    console.log(filtered);
     filtered.forEach(async (element) => {
       const resp = await FileSystem.getInfoAsync(element);
       if (resp.exists) {
@@ -67,10 +56,8 @@ const LogScreen = () => {
     }
   };
 
-  const deleteDocument = async (uri) => {
-    console.log(uri);
-    await StorageAccessFramework.deleteAsync(uri);
-    console.log("file deleted");
+  const deleteDocument = async () => {
+    await StorageAccessFramework.deleteAsync(uriToDelete);
     getAllDocument();
   };
 
@@ -93,29 +80,6 @@ const LogScreen = () => {
     }
   };
 
-  const openDocument = async () => {
-    const file = await DocumentPicker.getDocumentAsync({
-      copyToCacheDirectory: false,
-      multiple: false,
-      type: "application/json",
-    });
-
-    if (file.type != "cancel") {
-      setSingleFile(file);
-      const resp = await StorageAccessFramework.readAsStringAsync(file.uri);
-      console.log(resp); // UPLOAD STRING TO SERVER!
-    }
-
-    // const permissions =
-    //   await StorageAccessFramework.requestDirectoryPermissionsAsync()
-
-    // if (permissions.granted) {
-    //   const dirUri = permissions.directoryUri
-    // }
-
-    //await StorageAccessFramework.readAsStringAsync()
-  };
-
   const uploadDocument = async () => {
     try {
       const response = await axios.post(serverUrl, {
@@ -131,41 +95,20 @@ const LogScreen = () => {
     }
   };
 
-  const Item = ({ uri, filename, size, type, isSelected }) => (
-    <TouchableOpacity
-      onPress={() => {
-        console.log(isSelected);
-      }}
-    >
-      <View style={styles.row}>
-        <View>
-          <Ionicons name="document-text-outline" size={32} color="white" />
-        </View>
-        <View style={styles.column}>
-          <Text style={styles.whiteText}>{filename}</Text>
-          <Text style={styles.whiteText}>{size} bytes</Text>
-          <Text style={styles.whiteText}>{isSelected.toString()}</Text>
-        </View>
-        <View>
-          <TouchableOpacity
-            onPress={() => {
-              deleteDocument(uri);
-            }}
-          >
-            <Ionicons name="close-outline" size={32} color="white" />
-          </TouchableOpacity>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
-
   const renderItem = ({ item }) => (
-    <Item
+    <ListItem
       uri={item.uri}
       filename={item.filename}
       size={item.size}
       type={item.type}
       isSelected={item.isSelected}
+      onDelete={() => {
+        setUriToDelete(item.uri);
+        setShowAlert(true);
+      }}
+      onClick={() => {
+        console.log("item clicked");
+      }}
     />
   );
 
@@ -175,7 +118,6 @@ const LogScreen = () => {
         <Text>Logs</Text>
         <Button onPress={createUserDocument} title="Generate log file" />
         <Button onPress={getAllDocument} title="Refresh" />
-
         <FlatList
           data={filesUri}
           renderItem={renderItem}
@@ -191,6 +133,20 @@ const LogScreen = () => {
         />
 
         <Button onPress={uploadDocument} title="Upload log" />
+
+        {/* CUSTOM ALERT */}
+        <CustomAlert
+          isShowing={showAlert}
+          title={"Delete File"}
+          message={"Are you sure you want to delete this file?"}
+          onCancel={() => {
+            setShowAlert(false);
+          }}
+          onConfirm={() => {
+            deleteDocument();
+            setShowAlert(false);
+          }}
+        />
       </View>
     </SafeAreaView>
   );
