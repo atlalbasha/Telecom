@@ -17,7 +17,7 @@ export default function PingScreen() {
   const [text, onTextChange] = React.useState('')
 
   const [counter, setCounter] = React.useState(300)
-  // Third Attempts
+  // Klockar ner från 5min måste integrera med ping koden  50ms, 100ms, 20ms, 500ms, 1000ms​
   useEffect(() => {
     const timer =
       counter > 0 && setInterval(() => setCounter(counter - 1), 1000)
@@ -78,10 +78,6 @@ export default function PingScreen() {
       const response = await axios.get('https://www.google.se/')
       setResult(response.status)
       console.log(result)
-      // if (result) {
-      //   const timer = count - now
-      //   console.log('My timer: ', timer)
-      // }
     }
     searchApi()
   }
@@ -90,17 +86,8 @@ export default function PingScreen() {
       const response = await axios.get(url)
       setUrlResult(response.status)
       console.log('URL resulr ', urlResult)
-      // if (result) {
-      //   let timer = countDownDate - new Date().getTime
-      //   console.log('My timer: ', timer)
-      //   console.log(result)
-      //   return result
-      // }
     }
     searchApi()
-  }
-  function setTimer() {
-    const [counter, setCounter] = React.useState(60)
   }
 }
 
