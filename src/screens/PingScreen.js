@@ -12,8 +12,17 @@ import axios from 'axios'
 
 export default function PingScreen() {
   const [result, setResult] = useState([])
+  const [urlResult, setUrlResult] = useState([])
 
   const [text, onTextChange] = React.useState('')
+
+  const [counter, setCounter] = React.useState(300)
+  // Third Attempts
+  useEffect(() => {
+    const timer =
+      counter > 0 && setInterval(() => setCounter(counter - 1), 1000)
+    return () => clearInterval(timer)
+  }, [counter])
 
   // Det ska kunna göras 3st ping request en gång alternativt kontinuerligt med följande interval: ​
   // 50ms, 100ms, 20ms, 500ms, 1000ms​
@@ -24,6 +33,9 @@ export default function PingScreen() {
       <Text style={{ textAlign: 'center', fontSize: 20 }}>
         I'm the ping screen
       </Text>
+      <Text>Countdown: {counter}</Text>
+      <Text style={styles.text}>Ping: {result}</Text>
+      <Text style={styles.text}>URL: {urlResult}</Text>
       <TextInput
         style={styles.input}
         onChangeText={onTextChange}
@@ -45,22 +57,6 @@ export default function PingScreen() {
       >
         <Text style={styles.buttonText}>Send new url</Text>
       </Pressable>
-      <FlatList data={result}>
-        <View style={styles.item}>
-          <Text style={styles.text}>Type: {result}</Text>
-        </View>
-      </FlatList>
-      <FlatList
-        data={result}
-        renderItem={({ item }) => (
-          <View style={styles.item}>
-            <Text style={styles.text}>Type: {item.category}</Text>
-            <Text style={styles.text}>{item.setup}</Text>
-            <Text style={styles.text}>{item.delivery}</Text>
-          </View>
-        )}
-        keyExtractor={(joke) => joke.id.toString()}
-      />
       <Pressable
         onPress={() => {
           getPing()
@@ -92,8 +88,8 @@ export default function PingScreen() {
   function getUrl(url) {
     const searchApi = async () => {
       const response = await axios.get(url)
-      setResult(response.data.jokes)
-      console.log(result)
+      setUrlResult(response.status)
+      console.log('URL resulr ', urlResult)
       // if (result) {
       //   let timer = countDownDate - new Date().getTime
       //   console.log('My timer: ', timer)
@@ -104,8 +100,7 @@ export default function PingScreen() {
     searchApi()
   }
   function setTimer() {
-    var count = new Date(countDownDate).getTime()
-    var now = new Date().getTime()
+    const [counter, setCounter] = React.useState(60)
   }
 }
 
