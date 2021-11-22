@@ -1,10 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import {
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View
+} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import axios from 'axios'
 import { Stopwatch } from 'react-native-stopwatch-timer'
 
-//Det ska kunna göras 3st ping request en gång
+// TO:DO PINGA 3ST GÅNGER -- Kolla om så som den gör nu ör okej
 export default function PingScreen() {
   const [urlResult, setUrlResult] = useState([])
   const [text, onTextChange] = useState('')
@@ -26,7 +33,7 @@ export default function PingScreen() {
         Ping Screen
       </Text>
       <View style={options.container}>
-        <View style={options.sectionStyle}>
+        <View>
           <Stopwatch
             laps
             msecs
@@ -34,6 +41,7 @@ export default function PingScreen() {
             reset={resetStopwatch}
             options={options}
             getTime={(time) => {
+              // Kolla om vi ska spara eller bara displaya tid
               console.log(time)
             }}
           />
@@ -46,7 +54,8 @@ export default function PingScreen() {
         value={text}
         placeholder="Search url for ping"
         placeholderTextColor="#fff"
-        keyboardType="url"
+        // eller default till android
+        keyboardType={Platform.OS === 'ios' ? 'url' : 'email-address'}
       />
       <Pressable
         onPress={() => {
@@ -61,7 +70,7 @@ export default function PingScreen() {
           styles.viewButton
         ]}
       >
-        <Text style={styles.buttonText}>Send new url</Text>
+        <Text style={styles.buttonText}>Search</Text>
       </Pressable>
       <Pressable
         onPress={() => {
@@ -91,15 +100,15 @@ export default function PingScreen() {
           console.log('Data fetching cancelled')
         } else {
           // Handle error
-          alert('You need to write full a url')
-          console.log('Need to handel error ', error)
-          setUrlResult('Network Error')
+          alert('You need to write a full url')
+          setUrlResult(error.toString())
           setResetStopwatch(false)
           setIsStopwatchStart(false)
         }
       }
-      console.log('URL result ', urlResult)
     }
+    searchApi()
+    searchApi()
     searchApi()
   }
 }
@@ -136,11 +145,11 @@ const styles = StyleSheet.create({
     margin: 20,
     borderWidth: 2,
     padding: 20,
-    color: 'white'
+    color: '#ffff'
   }
 })
 
-const options = {
+const options = StyleSheet.create({
   container: {
     alignSelf: 'center',
     backgroundColor: '#0000',
@@ -153,4 +162,4 @@ const options = {
     color: '#FFF',
     marginLeft: 7
   }
-}
+})
