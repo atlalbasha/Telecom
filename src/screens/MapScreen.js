@@ -1,16 +1,18 @@
 import * as React from 'react'
 import { useState } from 'react'
 import MapView, { Heatmap, PROVIDER_GOOGLE } from 'react-native-maps'
-import { StyleSheet, View, Dimensions } from 'react-native'
+import { StyleSheet, View, Dimensions, Text } from 'react-native'
 import { mapStyle } from './Data.js/MapStyle1'
 import { silverTheme } from './Data.js/MapStyle2'
 import { Appbar } from 'react-native-paper'
 import { DataContext } from './shared/utils/DataContext'
+import { Menu, MenuItem, MenuDivider } from 'react-native-material-menu'
 
 import { useContext } from 'react'
 export default function App() {
   const [customMapStyle, setCustomMapStyle] = useState([])
   const [data, setData] = useContext(DataContext)
+  const [visible, setVisible] = useState(false)
 
   console.log(data)
   const areaColors = ['green', 'orange', 'red']
@@ -22,13 +24,35 @@ export default function App() {
   const changeThemeSilver = () => {
     setCustomMapStyle(silverTheme)
   }
+  const changeThemeStandard = () => {
+    setCustomMapStyle([])
+  }
+  const showMenu = () => setVisible(true)
+  const hideMenu = () => setVisible(false)
 
   return (
     <View>
       <Appbar.Header style={styles.header}>
         <Appbar.Content title="MapView" />
-        <Appbar.Action icon="map" onPress={changeTheme} />
-        <Appbar.Action icon="map" onPress={changeThemeSilver} />
+
+        <Menu
+          visible={visible}
+          anchor={
+            <Text
+              style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}
+              onPress={showMenu}
+            >
+              Styles
+            </Text>
+          }
+        >
+          <MenuItem onPress={changeTheme}>Dark</MenuItem>
+          <MenuDivider />
+          <MenuItem onPress={changeThemeSilver}>Silver</MenuItem>
+
+          <MenuDivider />
+          <MenuItem onPress={changeThemeStandard}>Standard</MenuItem>
+        </Menu>
       </Appbar.Header>
       <MapView
         style={{ flex: 1 }}
