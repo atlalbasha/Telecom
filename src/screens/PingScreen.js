@@ -8,14 +8,7 @@ import { Stopwatch, Timer } from 'react-native-stopwatch-timer'
 export default function PingScreen() {
   const [urlResult, setUrlResult] = useState([])
   const [text, onTextChange] = useState('')
-
-  //   Warning: componentWillReceiveProps has been renamed, and is not recommended for use. See https://reactjs.org/link/unsafe-component-lifecycles for details.
-
-  // * Move data fetching code or side effects to componentDidUpdate.
-  // * If you're updating state whenever props change, refactor your code to use memoization techniques or move it to static getDerivedStateFromProps. Learn more at: https://reactjs.org/link/derived-state
-  // * Rename componentWillReceiveProps to UNSAFE_componentWillReceiveProps to suppress this warning in non-strict mode. In React 18.x, only the UNSAFE_ name will work. To rename all deprecated lifecycles to their new names, you can run `npx react-codemod rename-unsafe-lifecycles` in your project source folder.
-
-  // Please update the following components: %s, StopWatch
+  const [time, setTime] = useState()
 
   //Timer
   const [isStopwatchStart, setIsStopwatchStart] = useState(false)
@@ -60,7 +53,6 @@ export default function PingScreen() {
         keyboardType="url"
       />
       <Pressable
-        value={text}
         onPress={() => {
           getUrl(text, isStopwatchStart, resetStopwatch)
           setIsStopwatchStart(!isStopwatchStart)
@@ -74,6 +66,19 @@ export default function PingScreen() {
       >
         <Text style={styles.buttonText}>Send new url</Text>
       </Pressable>
+      <Pressable
+        onPress={() => {
+          setResetStopwatch(true)
+        }}
+        style={({ pressed }) => [
+          {
+            backgroundColor: pressed ? 'lightgrey' : '#0077b6'
+          },
+          styles.viewButton
+        ]}
+      >
+        <Text style={styles.buttonText}>RESET</Text>
+      </Pressable>
     </SafeAreaView>
   )
 
@@ -84,8 +89,6 @@ export default function PingScreen() {
         const response = await axios.get('https://' + url)
         setUrlResult(response.status)
         setIsStopwatchStart(false)
-        setResetStopwatch(true)
-        console.log('response data: ', response.data)
       } catch (error) {
         if (axios.isCancel(error)) {
           console.log('Data fetching cancelled')
@@ -140,7 +143,7 @@ const styles = StyleSheet.create({
 const options = {
   container: {
     alignSelf: 'center',
-    backgroundColor: '#FF0000',
+    backgroundColor: '#0000',
     padding: 5,
     borderRadius: 5,
     width: 200
