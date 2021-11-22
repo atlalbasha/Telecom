@@ -1,12 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  TouchableHighlight
-} from 'react-native'
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import axios from 'axios'
 import { Stopwatch, Timer } from 'react-native-stopwatch-timer'
@@ -15,6 +8,14 @@ import { Stopwatch, Timer } from 'react-native-stopwatch-timer'
 export default function PingScreen() {
   const [urlResult, setUrlResult] = useState([])
   const [text, onTextChange] = useState('')
+
+  //   Warning: componentWillReceiveProps has been renamed, and is not recommended for use. See https://reactjs.org/link/unsafe-component-lifecycles for details.
+
+  // * Move data fetching code or side effects to componentDidUpdate.
+  // * If you're updating state whenever props change, refactor your code to use memoization techniques or move it to static getDerivedStateFromProps. Learn more at: https://reactjs.org/link/derived-state
+  // * Rename componentWillReceiveProps to UNSAFE_componentWillReceiveProps to suppress this warning in non-strict mode. In React 18.x, only the UNSAFE_ name will work. To rename all deprecated lifecycles to their new names, you can run `npx react-codemod rename-unsafe-lifecycles` in your project source folder.
+
+  // Please update the following components: %s, StopWatch
 
   //Timer
   const [isStopwatchStart, setIsStopwatchStart] = useState(false)
@@ -37,12 +38,12 @@ export default function PingScreen() {
           <Stopwatch
             laps
             msecs
+            // Start
             start={isStopwatchStart}
-            //To start
-            reset={resetStopwatch}
             //To reset
-            options={options}
+            reset={resetStopwatch}
             //options for the styling
+            options={options}
             getTime={(time) => {
               getUrl()
               console.log(time)
@@ -61,7 +62,7 @@ export default function PingScreen() {
       <Pressable
         value={text}
         onPress={() => {
-          getUrl(text)
+          getUrl(text, isStopwatchStart, resetStopwatch)
           setIsStopwatchStart(!isStopwatchStart)
         }}
         style={({ pressed }) => [
@@ -76,16 +77,24 @@ export default function PingScreen() {
     </SafeAreaView>
   )
 
-  function getUrl(url) {
+  function getUrl(url, isStopwatchStart, resetStopwatch) {
     // start a timer in button press
     const searchApi = async () => {
-      const response = await axios.get('https://' + url)
-      setUrlResult(response.status)
-      // end timer when request finished
-      if (urlResult === '200') {
-        setIsStopwatchStart(!isStopwatchStart)
+      try {
+        const response = await axios.get('https://' + url)
+        setUrlResult(response.status)
+        setIsStopwatchStart(false)
         setResetStopwatch(true)
+        console.log('response data: ', response.data)
+      } catch (error) {
+        if (axios.isCancel(error)) {
+          console.log('Data fetching cancelled')
+        } else {
+          // Handle error
+          console.log('Need to handel error')
+        }
       }
+      // end timer when request finished
       console.log('URL result ', urlResult)
     }
     searchApi()
