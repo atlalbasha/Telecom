@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import axios from 'axios'
-import { Stopwatch, Timer } from 'react-native-stopwatch-timer'
+import { Stopwatch } from 'react-native-stopwatch-timer'
 
 //Det ska kunna göras 3st ping request en gång
 export default function PingScreen() {
@@ -44,8 +44,8 @@ export default function PingScreen() {
         style={styles.input}
         onChangeText={onTextChange}
         value={text}
-        placeholder="Write a url to search"
-        placeholderTextColor="#f0f"
+        placeholder="Search url for ping"
+        placeholderTextColor="#fff"
         keyboardType="url"
       />
       <Pressable
@@ -91,7 +91,11 @@ export default function PingScreen() {
           console.log('Data fetching cancelled')
         } else {
           // Handle error
-          console.log('Need to handel error')
+          alert('You need to write full a url')
+          console.log('Need to handel error ', error)
+          setUrlResult('Network Error')
+          setResetStopwatch(false)
+          setIsStopwatchStart(false)
         }
       }
       console.log('URL result ', urlResult)
