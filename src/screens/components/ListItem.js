@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -11,20 +11,22 @@ const ListItem = ({
   onDelete,
   onClick,
 }) => {
+  const [selected, setSelected] = useState(false);
+
   return (
     <TouchableOpacity
       onPress={() => {
-        onClick();
+        setSelected(!selected);
+        onClick(uri);
       }}
     >
-      <View style={styles.row}>
+      <View style={selected ? styles.rowSelected : styles.row}>
         <View>
           <Ionicons name="document-text-outline" size={32} color="white" />
         </View>
         <View style={styles.column}>
           <Text style={styles.whiteText}>{filename}</Text>
           <Text style={styles.whiteText}>{size} bytes</Text>
-          <Text style={styles.whiteText}>{isSelected.toString()}</Text>
         </View>
         <View>
           <TouchableOpacity
@@ -51,6 +53,17 @@ const styles = StyleSheet.create({
     padding: 8,
     backgroundColor: "#3b4053",
     borderRadius: 8,
+  },
+  rowSelected: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 8,
+    padding: 8,
+    backgroundColor: "#3b4053",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#0496FF",
   },
   column: {
     flexDirection: "column",

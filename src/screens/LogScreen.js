@@ -25,6 +25,7 @@ const LogScreen = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [uriToDelete, setUriToDelete] = useState(null);
   const [canSend, setCanSend] = useState(false);
+  const [currentSelectedUri, setCurrentSelectedUri] = useState([]);
 
   useEffect(() => {
     if (serverUrl.length === 0) {
@@ -54,7 +55,6 @@ const LogScreen = () => {
           size: resp.size,
           type: "json",
           filename: name,
-          isSelected: false,
         });
       }
       setFilesUri(tmp);
@@ -88,7 +88,18 @@ const LogScreen = () => {
     }
   };
 
+  async function uriToBody() {
+    console.log("URI TO BODY");
+    const files = currentSelectedUri.map(async (file, index) => {
+      const content = await StorageAccessFramework.readAsStringAsync(file);
+      return { id: index, locations: content };
+    });
+    const items = await Promise.all(files);
+    return items;
+  }
+
   const uploadDocument = async () => {
+    const body = await uriToBody();
     try {
       const response = await axios.post(serverUrl, {
         // INSERT FILE!
@@ -109,13 +120,25 @@ const LogScreen = () => {
       filename={item.filename}
       size={item.size}
       type={item.type}
-      isSelected={item.isSelected}
       onDelete={() => {
         setUriToDelete(item.uri);
         setShowAlert(true);
       }}
-      onClick={() => {
-        console.log("item clicked");
+      onClick={(uri) => {
+        const tmp = [...currentSelectedUri];
+        if (tmp.length <= 0) {
+          tmp.push(uri);
+          setCurrentSelectedUri(tmp);
+        } else {
+          const index = tmp.findIndex((element) => element === uri);
+          if (index === -1) {
+            tmp.push(uri);
+            setCurrentSelectedUri(tmp);
+          } else {
+            tmp.splice(index, 1);
+            setCurrentSelectedUri(tmp);
+          }
+        }
       }}
     />
   );
@@ -138,6 +161,10 @@ const LogScreen = () => {
           renderItem={renderItem}
           keyExtractor={(item) => item.uri}
         />
+
+        <Text style={styles.whiteText}>
+          Selected files: {currentSelectedUri.length}
+        </Text>
         <TextInput
           style={styles.input}
           onChangeText={onChangeText}
@@ -216,6 +243,9 @@ const styles = StyleSheet.create({
   },
   buttonTextDisabled: {
     color: "grey",
+  },
+  whiteText: {
+    color: "white",
   },
 });
 
