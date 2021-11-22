@@ -8,7 +8,6 @@ import { Stopwatch, Timer } from 'react-native-stopwatch-timer'
 export default function PingScreen() {
   const [urlResult, setUrlResult] = useState([])
   const [text, onTextChange] = useState('')
-  const [time, setTime] = useState()
 
   //Timer
   const [isStopwatchStart, setIsStopwatchStart] = useState(false)
@@ -19,7 +18,7 @@ export default function PingScreen() {
       <Text
         style={{
           textAlign: 'center',
-          fontSize: 20,
+          fontSize: 34,
           fontWeight: 'bold',
           color: 'white'
         }}
@@ -31,31 +30,29 @@ export default function PingScreen() {
           <Stopwatch
             laps
             msecs
-            // Start
             start={isStopwatchStart}
-            //To reset
             reset={resetStopwatch}
-            //options for the styling
             options={options}
             getTime={(time) => {
-              getUrl()
               console.log(time)
             }}
           />
         </View>
       </View>
-      <Text style={styles.text}>URL Code: {urlResult}</Text>
+      <Text style={styles.text}>Code: {urlResult}</Text>
       <TextInput
         style={styles.input}
         onChangeText={onTextChange}
         value={text}
         placeholder="Write a url to search"
+        placeholderTextColor="#f0f"
         keyboardType="url"
       />
       <Pressable
         onPress={() => {
-          getUrl(text, isStopwatchStart, resetStopwatch)
+          getUrl(text)
           setIsStopwatchStart(!isStopwatchStart)
+          setResetStopwatch(false)
         }}
         style={({ pressed }) => [
           {
@@ -68,7 +65,7 @@ export default function PingScreen() {
       </Pressable>
       <Pressable
         onPress={() => {
-          setResetStopwatch(true)
+          setResetStopwatch(!resetStopwatch)
         }}
         style={({ pressed }) => [
           {
@@ -82,12 +79,12 @@ export default function PingScreen() {
     </SafeAreaView>
   )
 
-  function getUrl(url, isStopwatchStart, resetStopwatch) {
-    // start a timer in button press
+  function getUrl(url) {
     const searchApi = async () => {
       try {
-        const response = await axios.get('https://' + url)
+        const response = await axios.get('http://' + url)
         setUrlResult(response.status)
+        // end timer when request finished
         setIsStopwatchStart(false)
       } catch (error) {
         if (axios.isCancel(error)) {
@@ -97,7 +94,6 @@ export default function PingScreen() {
           console.log('Need to handel error')
         }
       }
-      // end timer when request finished
       console.log('URL result ', urlResult)
     }
     searchApi()
