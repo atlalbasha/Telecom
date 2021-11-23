@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import MapScreen from './src/screens/MapScreen'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import PingScreen from './src/screens/PingScreen'
 import { Ionicons } from '@expo/vector-icons'
 import { DataProvider } from './src/screens/shared/utils/DataContext'
 import LogScreen from './src/screens/LogScreen'
@@ -24,7 +25,9 @@ export default function App() {
                   iconName = focused ? 'map' : 'map-outline'
                 } else if (route.name === 'Log') {
                   iconName = focused ? 'documents' : 'documents-outline'
-                }
+                } else if (route.name === 'Ping') {
+                  iconName = focused ? 'wifi' : 'wifi-outline'
+                }  
                 return <Ionicons name={iconName} size={size} color={color} />
               },
               tabBarActiveTintColor: '#3b4053',
@@ -52,6 +55,13 @@ export default function App() {
               name="Log"
               component={LogScreen}
             />
+           <Tab.Screen
+            options={{
+              header: () => null
+            }}
+            name="Ping"
+            component={PingScreen}
+          />
           </Tab.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>
