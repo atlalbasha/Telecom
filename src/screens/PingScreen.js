@@ -5,34 +5,34 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  View
+  View,
+  FlatList
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import axios from 'axios'
 import { Stopwatch } from 'react-native-stopwatch-timer'
 
-// TO:DO PINGA 3ST GÅNGER -- Kolla om så som den gör nu ör okej
 export default function PingScreen() {
   const [urlResult, setUrlResult] = useState([])
   const [text, onTextChange] = useState('')
+  let [result] = useState([])
 
-  //Timer
   const [isStopwatchStart, setIsStopwatchStart] = useState(false)
   const [resetStopwatch, setResetStopwatch] = useState(false)
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#14213d' }}>
-      <Text
-        style={{
-          textAlign: 'center',
-          fontSize: 34,
-          fontWeight: 'bold',
-          color: 'white'
-        }}
-      >
-        Ping Screen
-      </Text>
       <View style={options.container}>
+        <Text
+          style={{
+            textAlign: 'center',
+            fontSize: 20,
+            fontWeight: 'bold',
+            color: 'white'
+          }}
+        >
+          Timer for request
+        </Text>
         <View>
           <Stopwatch
             laps
@@ -40,10 +40,6 @@ export default function PingScreen() {
             start={isStopwatchStart}
             reset={resetStopwatch}
             options={options}
-            getTime={(time) => {
-              // Kolla om vi ska spara eller bara displaya tid
-              console.log(time)
-            }}
           />
         </View>
       </View>
@@ -85,6 +81,15 @@ export default function PingScreen() {
       >
         <Text style={styles.buttonText}>RESET</Text>
       </Pressable>
+      <FlatList
+        data={result}
+        renderItem={({ item }) => (
+          <View style={styles.item}>
+            <Text style={styles.listText}>Type: {item.status}</Text>
+          </View>
+        )}
+        keyExtractor={(joke) => joke.id}
+      />
     </SafeAreaView>
   )
 
@@ -93,6 +98,10 @@ export default function PingScreen() {
       try {
         const response = await axios.get('http://' + url)
         setUrlResult(response.status)
+        result.push({
+          id: result.length,
+          status: response.status
+        })
         // end timer when request finished
         setIsStopwatchStart(false)
       } catch (error) {
@@ -100,13 +109,13 @@ export default function PingScreen() {
           console.log('Data fetching cancelled')
         } else {
           // Handle error
-          alert('You need to write a full url')
           setUrlResult(error.toString())
           setResetStopwatch(false)
           setIsStopwatchStart(false)
         }
       }
     }
+
     searchApi()
     searchApi()
     searchApi()
@@ -114,6 +123,10 @@ export default function PingScreen() {
 }
 
 const styles = StyleSheet.create({
+  listText: {
+    fontSize: 16,
+    color: 'white'
+  },
   buttonText: {
     fontSize: 24,
     color: 'white',
@@ -160,6 +173,6 @@ const options = StyleSheet.create({
   text: {
     fontSize: 25,
     color: '#FFF',
-    marginLeft: 7
+    marginLeft: 20
   }
 })
