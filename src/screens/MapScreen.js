@@ -16,7 +16,6 @@ export default function App() {
   const [visible, setVisible] = useState(false)
 
   const areaColors = ['green', 'orange', 'red']
-
   const startPoints = [0.01, 0.5, 0.75]
   const changeTheme = () => {
     setCustomMapStyle(mapStyle)
