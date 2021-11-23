@@ -22,7 +22,8 @@ const LogScreen = () => {
   const [serverUrl, onChangeText] = useState("");
   const [userDirectory, setUserDirectory] = useState(null);
   const [filesUri, setFilesUri] = useState([]);
-  const [showAlert, setShowAlert] = useState(false);
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [uriToDelete, setUriToDelete] = useState(null);
   const [canSend, setCanSend] = useState(false);
   const [currentSelectedUri, setCurrentSelectedUri] = useState([]);
@@ -99,19 +100,20 @@ const LogScreen = () => {
   }
 
   const uploadDocument = async () => {
+    setShowSuccessAlert(true);
     const body = await uriToBody();
-    try {
-      const response = await axios.post(serverUrl, {
-        // INSERT FILE!
-      });
-      if (response.status === 201) {
-        alert(` You have created: ${JSON.stringify(response.data)}`);
-      } else {
-        throw new Error("An error has occurred");
-      }
-    } catch (error) {
-      alert("An error has occurred");
-    }
+    // try {
+    //   const response = await axios.post(serverUrl, {
+    //     // INSERT FILE!
+    //   });
+    //   if (response.status === 201) {
+    //     alert(` You have created: ${JSON.stringify(response.data)}`);
+    //   } else {
+    //     throw new Error("An error has occurred");
+    //   }
+    // } catch (error) {
+    //   alert("An error has occurred");
+    // }
   };
 
   const renderItem = ({ item }) => (
@@ -122,7 +124,7 @@ const LogScreen = () => {
       type={item.type}
       onDelete={() => {
         setUriToDelete(item.uri);
-        setShowAlert(true);
+        setShowDeleteAlert(true);
       }}
       onClick={(uri) => {
         const tmp = [...currentSelectedUri];
@@ -183,17 +185,35 @@ const LogScreen = () => {
           </Text>
         </Pressable>
 
-        {/* CUSTOM ALERT */}
+        {/* CUSTOM ALERTS */}
         <CustomAlert
-          isShowing={showAlert}
+          isShowing={showDeleteAlert}
           title={"Delete File"}
           message={"Are you sure you want to delete this file?"}
+          cancelText={"Cancel"}
+          confirmText={"Delete"}
+          confirmButtonColor={"#DD6B55"}
+          showCancelButton={true}
           onCancel={() => {
-            setShowAlert(false);
+            setShowDeleteAlert(false);
           }}
           onConfirm={() => {
             deleteDocument();
-            setShowAlert(false);
+            setShowDeleteAlert(false);
+          }}
+        />
+        <CustomAlert
+          isShowing={showSuccessAlert}
+          title={"Files successfully uploaded"}
+          message={"Your files are now securely stored on " + serverUrl}
+          confirmText={"Perfect"}
+          confirmButtonColor={"#74A57F"}
+          showCancelButton={false}
+          onCancel={() => {
+            setShowSuccessAlert(false);
+          }}
+          onConfirm={() => {
+            setShowSuccessAlert(false);
           }}
         />
       </View>

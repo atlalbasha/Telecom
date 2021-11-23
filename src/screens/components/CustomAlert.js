@@ -2,7 +2,17 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import AwesomeAlert from "react-native-awesome-alerts";
 
-const CustomAlert = ({ isShowing, title, message, onCancel, onConfirm }) => {
+const CustomAlert = ({
+  isShowing,
+  title,
+  message,
+  cancelText,
+  confirmText,
+  onCancel,
+  onConfirm,
+  showCancelButton,
+  confirmButtonColor,
+}) => {
   return (
     <View>
       <AwesomeAlert
@@ -12,20 +22,17 @@ const CustomAlert = ({ isShowing, title, message, onCancel, onConfirm }) => {
         message={message}
         closeOnTouchOutside={true}
         closeOnHardwareBackPress={false}
-        showCancelButton={true}
+        showCancelButton={showCancelButton}
         showConfirmButton={true}
-        cancelText="No, cancel"
-        confirmText="Yes, delete it"
-        confirmButtonColor="#DD6B55"
+        cancelText={cancelText}
+        confirmText={confirmText}
+        confirmButtonColor={confirmButtonColor}
         onCancelPressed={() => {
-          //   setShowAlert(false);
           {
             onCancel();
           }
         }}
         onConfirmPressed={() => {
-          //   deleteDocument();
-          //   setShowAlert(false);
           {
             onConfirm();
           }
