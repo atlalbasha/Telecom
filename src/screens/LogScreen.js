@@ -3,7 +3,6 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
   TextInput,
   FlatList,
   Pressable,
@@ -20,13 +19,20 @@ import ListItem from "./components/ListItem";
 const LogScreen = () => {
   const [locations, setData] = useContext(DataContext);
   const [serverUrl, onChangeText] = useState("");
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [canSend, setCanSend] = useState(false);
+
+  // FILE MANAGER
+  const [permission, setPermission] = useState();
   const [userDirectory, setUserDirectory] = useState(null);
+  const [currentSelectedUri, setCurrentSelectedUri] = useState([]);
+  const [uriToDelete, setUriToDelete] = useState(null);
   const [filesUri, setFilesUri] = useState([]);
+
+  // ALERTS
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
-  const [uriToDelete, setUriToDelete] = useState(null);
-  const [canSend, setCanSend] = useState(false);
-  const [currentSelectedUri, setCurrentSelectedUri] = useState([]);
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
 
   useEffect(() => {
     if (serverUrl.length === 0) {
@@ -35,6 +41,25 @@ const LogScreen = () => {
       setCanSend(true);
     }
   }, [serverUrl]);
+
+  useEffect(async () => {
+    const permissions =
+      await StorageAccessFramework.requestDirectoryPermissionsAsync();
+    if (permissions.granted) {
+      setPermission(permissions.granted);
+      const dirUri = permissions.directoryUri;
+      setUserDirectory(dirUri);
+    }
+  }, []);
+
+  useEffect(() => {
+    getAllDocument();
+  }, [userDirectory]);
+
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    getAllDocument();
+  };
 
   const getAllDocument = async () => {
     const tmp = [];
@@ -45,12 +70,8 @@ const LogScreen = () => {
     filtered.forEach(async (element) => {
       const resp = await FileSystem.getInfoAsync(element);
       if (resp.exists) {
-        // TRIM THE NAME
         let index = resp.uri.indexOf("telecom");
         let name = resp.uri.slice(index);
-
-        //CHECK AMOUT OF LOCATIONS - TODO
-
         tmp.push({
           uri: resp.uri,
           size: resp.size,
@@ -63,6 +84,7 @@ const LogScreen = () => {
     if (tmp.length === 0) {
       setFilesUri([]);
     }
+    setIsRefreshing(false);
   };
 
   const deleteDocument = async () => {
@@ -71,13 +93,9 @@ const LogScreen = () => {
   };
 
   const createUserDocument = async () => {
-    const permissions =
-      await StorageAccessFramework.requestDirectoryPermissionsAsync();
-    if (permissions.granted) {
-      const dirUri = permissions.directoryUri;
-      setUserDirectory(dirUri);
+    if (permission) {
       const docUri = await StorageAccessFramework.createFileAsync(
-        dirUri,
+        userDirectory,
         "telecom-logs-" + getCurrentTime(),
         "application/json"
       );
@@ -90,7 +108,6 @@ const LogScreen = () => {
   };
 
   async function uriToBody() {
-    console.log("URI TO BODY");
     const files = currentSelectedUri.map(async (file, index) => {
       const content = await StorageAccessFramework.readAsStringAsync(file);
       return { id: index, locations: content };
@@ -100,20 +117,19 @@ const LogScreen = () => {
   }
 
   const uploadDocument = async () => {
-    setShowSuccessAlert(true);
     const body = await uriToBody();
-    // try {
-    //   const response = await axios.post(serverUrl, {
-    //     // INSERT FILE!
-    //   });
-    //   if (response.status === 201) {
-    //     alert(` You have created: ${JSON.stringify(response.data)}`);
-    //   } else {
-    //     throw new Error("An error has occurred");
-    //   }
-    // } catch (error) {
-    //   alert("An error has occurred");
-    // }
+    try {
+      const response = await axios.post(serverUrl, {
+        body,
+      });
+      if (response.status === 201) {
+        setShowSuccessAlert(true);
+      } else {
+        throw new Error("An error has occurred");
+      }
+    } catch (error) {
+      setShowErrorAlert(true);
+    }
   };
 
   const renderItem = ({ item }) => (
@@ -148,20 +164,18 @@ const LogScreen = () => {
   return (
     <SafeAreaView>
       <View style={styles.container}>
-        <Text>Logs</Text>
+        <Text style={styles.textHeader}>Logs</Text>
 
         <Pressable style={styles.button} onPress={createUserDocument}>
           <Text style={styles.buttonText}>Generate new log file</Text>
-        </Pressable>
-
-        <Pressable style={styles.button} onPress={getAllDocument}>
-          <Text style={styles.buttonText}>Refresh</Text>
         </Pressable>
 
         <FlatList
           data={filesUri}
           renderItem={renderItem}
           keyExtractor={(item) => item.uri}
+          onRefresh={onRefresh}
+          refreshing={isRefreshing}
         />
 
         <Text style={styles.whiteText}>
@@ -216,6 +230,20 @@ const LogScreen = () => {
             setShowSuccessAlert(false);
           }}
         />
+
+        <CustomAlert
+          isShowing={showErrorAlert}
+          title={"Something went wrong!"}
+          message={"An error has occurred!"}
+          confirmText={"Okay"}
+          showCancelButton={false}
+          onCancel={() => {
+            setShowErrorAlert(false);
+          }}
+          onConfirm={() => {
+            setShowErrorAlert(false);
+          }}
+        />
       </View>
     </SafeAreaView>
   );
@@ -226,6 +254,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#252b41",
     height: "100%",
     padding: 16,
+  },
+
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  textHeader: {
+    color: "white",
+    fontSize: 32,
+    marginBottom: 8,
   },
 
   input: {
