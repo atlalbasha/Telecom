@@ -26,16 +26,13 @@ export default function App() {
                   iconName = focused ? 'home' : 'home-outline'
                 } else if (route.name === 'Map') {
                   iconName = focused ? 'map' : 'map-outline'
-
                 } else if (route.name === 'Settings') {
                   iconName = focused ? 'settings' : 'settings-outline'
-                }
-
                 } else if (route.name === 'Log') {
                   iconName = focused ? 'documents' : 'documents-outline'
                 } else if (route.name === 'Ping') {
                   iconName = focused ? 'wifi' : 'wifi-outline'
-                }  
+                }
 
                 return <Ionicons name={iconName} size={size} color={color} />
               },
@@ -61,22 +58,24 @@ export default function App() {
               options={{
                 header: () => null
               }}
-
               name="Settings"
               component={SettingsScreen}
             />
-
+            <Tab.Screen
+              options={{
+                header: () => null
+              }}
               name="Log"
               component={LogScreen}
             />
-           <Tab.Screen
-            options={{
-              header: () => null
-            }}
-            name="Ping"
-            component={PingScreen}
-          />
 
+            <Tab.Screen
+              options={{
+                header: () => null
+              }}
+              name="Ping"
+              component={PingScreen}
+            />
           </Tab.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>

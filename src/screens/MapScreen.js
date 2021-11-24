@@ -17,6 +17,7 @@ export default function App({ navigation }) {
 
   const [dataValues, setDataValues] = data
   const [colorsValues, setColorsValues] = colors
+  const [visible, setVisible] = useState(false)
 
   const areaColors = [
     '#5F5F5F',
@@ -28,7 +29,6 @@ export default function App({ navigation }) {
   ]
   const startPoints = [0.1, 0.2, 0.3, 0.4, 0.5, 0.9]
 
- 
   const changeTheme = () => {
     setCustomMapStyle(mapStyle)
   }
@@ -42,11 +42,14 @@ export default function App({ navigation }) {
   const hideMenu = () => setVisible(false)
 
   return (
-
     <SafeAreaView>
       <View>
         <Appbar style={styles.header}>
           <Appbar.Content title="MapView" />
+          <Appbar.Action
+            icon="tune"
+            onPress={() => navigation.navigate('Settings')}
+          />
 
           <Menu
             visible={visible}
@@ -67,10 +70,6 @@ export default function App({ navigation }) {
             <MenuDivider />
             <MenuItem onPress={changeThemeStandard}>Standard</MenuItem>
           </Menu>
- <Appbar.Action
-          icon="tune"
-          onPress={() => navigation.navigate('Settings')}
-        />
         </Appbar>
         <MapView
           style={{ flex: 1 }}
@@ -85,22 +84,21 @@ export default function App({ navigation }) {
           }}
         >
           <Heatmap
-          points={dataValues}
-          opacity={1}
-          radius={20}
-          maxIntensity={100}
-          gradientSmoothing={10}
-          heatmapMode={'POINTS_DENSITY'}
-          gradient={{
-            colors: areaColors,
-            startPoints: colorsValues,
-            colorMapSize: 256
-          }}
-        ></Heatmap>
+            points={dataValues}
+            opacity={1}
+            radius={20}
+            maxIntensity={100}
+            gradientSmoothing={10}
+            heatmapMode={'POINTS_DENSITY'}
+            gradient={{
+              colors: areaColors,
+              startPoints: colorsValues,
+              colorMapSize: 256
+            }}
+          ></Heatmap>
         </MapView>
       </View>
     </SafeAreaView>
-
   )
 }
 
