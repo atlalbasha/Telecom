@@ -4,13 +4,16 @@ import { NavigationContainer } from '@react-navigation/native'
 import MapScreen from './src/screens/MapScreen'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+
 import PingScreen from './src/screens/PingScreen'
 import { Ionicons } from '@expo/vector-icons'
 import { DataProvider } from './src/screens/shared/utils/DataContext'
 import LogScreen from './src/screens/LogScreen'
+import SettingsScreen from './src/screens/SettingsScreen'
 
 export default function App() {
   const Tab = createBottomTabNavigator()
+
   return (
     <DataProvider>
       <SafeAreaProvider>
@@ -23,11 +26,14 @@ export default function App() {
                   iconName = focused ? 'home' : 'home-outline'
                 } else if (route.name === 'Map') {
                   iconName = focused ? 'map' : 'map-outline'
+                } else if (route.name === 'Settings') {
+                  iconName = focused ? 'settings' : 'settings-outline'
                 } else if (route.name === 'Log') {
                   iconName = focused ? 'documents' : 'documents-outline'
                 } else if (route.name === 'Ping') {
                   iconName = focused ? 'wifi' : 'wifi-outline'
-                }  
+                }
+
                 return <Ionicons name={iconName} size={size} color={color} />
               },
               tabBarActiveTintColor: '#3b4053',
@@ -52,16 +58,24 @@ export default function App() {
               options={{
                 header: () => null
               }}
+              name="Settings"
+              component={SettingsScreen}
+            />
+            <Tab.Screen
+              options={{
+                header: () => null
+              }}
               name="Log"
               component={LogScreen}
             />
-           <Tab.Screen
-            options={{
-              header: () => null
-            }}
-            name="Ping"
-            component={PingScreen}
-          />
+
+            <Tab.Screen
+              options={{
+                header: () => null
+              }}
+              name="Ping"
+              component={PingScreen}
+            />
           </Tab.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>

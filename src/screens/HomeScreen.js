@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { StyleSheet, Text, View, Switch } from 'react-native'
+import { StyleSheet, Text, View, Switch, Button } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import * as Location from 'expo-location'
 import NetInfo from '@react-native-community/netinfo'
@@ -9,44 +9,68 @@ import LocationInfo from './components/LocationInfo'
 import { DataContext } from './shared/utils/DataContext'
 
 const HomeScreen = () => {
-  const [data, setData] = useContext(DataContext)
+  const { data } = useContext(DataContext)
+  const [dataValues, setDataValues] = data
+  const [randomNumber, setRandomNumber] = useState(0)
+
+  const [client, setClient] = useState(null)
   const [netInfoData, setNetInfoData] = useState()
   const [location, setLocation] = useState(null)
   //SWITCH
   const [isEnabled, setIsEnabled] = useState(true)
-  const toggleSwitch = () => setIsEnabled((previousState) => !previousState)
+  const toggleSwitch = () => {
+    setIsEnabled((previousState) => !previousState)
+  }
 
-  useEffect(async () => {
+  const getRandomNumber = () => {
+    setRandomNumber(Math.floor(Math.random() * 100) + 1)
+  }
+  const getPermissions = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync()
 
     if (status !== 'granted') {
       setErrorMessage('Permission to access location was denied')
       return
     }
-
+  }
+  const getNetInfo = async () => {
     NetInfo.addEventListener((state) => {
       setNetInfoData(state)
     })
-
-    await Location.watchPositionAsync(
+  }
+  const getLocation = async () => {
+    const loc1 = await Location.watchPositionAsync(
       {
         accuracy: Location.Accuracy.Highest,
-        distanceInterval: 2,
+        distanceInterval: 1,
         timeInterval: 1000
       },
       (loc) => {
         setLocation(loc)
-        setData((prevLocation) => [
+        getRandomNumber()
+        setDataValues((prevLocation) => [
           ...prevLocation,
           {
             longitude: loc.coords.longitude,
             latitude: loc.coords.latitude,
-            weight: 20
+            weight: randomNumber
           }
         ])
       }
     )
-  }, [])
+
+    setClient(loc1)
+  }
+
+  useEffect(() => {
+    getPermissions()
+    getNetInfo()
+    if (isEnabled) {
+      getLocation()
+    } else {
+      client.remove()
+    }
+  }, [isEnabled])
 
   return (
     <SafeAreaView>
@@ -60,15 +84,15 @@ const HomeScreen = () => {
         />
         <SignalInfo
           isActive={isEnabled}
-          strength={netInfoData?.details.strength}
+          strength={randomNumber}
           frequency={netInfoData?.details.frequency}
         />
         <NetworkInfo
           isActive={isEnabled}
           type={netInfoData?.type}
           isConnected={netInfoData?.isConnected.toString()}
-          isInternetReachable={netInfoData?.isInternetReachable.toString()}
-          isWifiEnabled={netInfoData?.isWifiEnabled.toString()}
+          isInternetReachable={true} //netInfoData?.isInternetReachable.toString()}
+          isWifiEnabled={true} //netInfoData?.isWifiEnabled.toString()}
           ssid={netInfoData?.details.ssid}
           ipAddress={netInfoData?.details.ipAddress}
           subnet={netInfoData?.details.subnet}

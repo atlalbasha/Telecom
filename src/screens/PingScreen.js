@@ -12,6 +12,9 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import axios from 'axios'
 import { Stopwatch, Timer } from 'react-native-stopwatch-timer'
 
+import ButtonStyle from './components/ButtonStyle'
+import CustomInput from './components/CustomInput'
+
 export default function PingScreen() {
   const [urlResult, setUrlResult] = useState([])
   const [text, onTextChange] = useState('')
@@ -24,8 +27,8 @@ export default function PingScreen() {
   const [totTime, setTotTime] = useState('')
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ backgroundColor: '#252b41', height: '100%', padding: 16 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#252b41' }}>
+      <View style={styles.container}>
         <View style={options.container}>
           <Text
             style={{
@@ -44,58 +47,38 @@ export default function PingScreen() {
               start={isStopwatchStart}
               reset={resetStopwatch}
               options={options}
-              getTime={getFormattedTime}
             />
           </View>
         </View>
+
         <Text style={styles.text}>Code: {urlResult}</Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={onTextChange}
-          value={text}
-          placeholder="Search url for ping"
-          placeholderTextColor="#fff"
-          // eller default till android
-          keyboardType={Platform.OS === 'ios' ? 'url' : 'email-address'}
-        />
-        <Pressable
+        <CustomInput onChangeText={onTextChange} value={text} />
+
+        <ButtonStyle
+          canSend={true}
           onPress={() => {
             getUrl(text)
             setIsStopwatchStart(!isStopwatchStart)
             setResetStopwatch(false)
           }}
-          style={({ pressed }) => [
-            {
-              backgroundColor: pressed ? 'lightgrey' : '#0077b6'
-            },
-            styles.viewButton
-          ]}
-        >
-          <Text style={styles.buttonText}>Search</Text>
-        </Pressable>
-        <Pressable
+          title="Search"
+        />
+        <ButtonStyle
+          canSend={true}
           onPress={() => {
             setResetStopwatch(!resetStopwatch)
           }}
-          style={({ pressed }) => [
-            {
-              backgroundColor: pressed ? 'lightgrey' : '#0077b6'
-            },
-            styles.viewButton
-          ]}
-        >
-          <Text style={styles.buttonText}>RESET</Text>
-        </Pressable>
+          title="Reset"
+        />
+
         <FlatList
           data={result}
           renderItem={({ item }) => (
             <View style={styles.item}>
-              <Text style={styles.listText}>
-                Request: {item.text}, Time: {item.status} & status: {item.code}
-              </Text>
+              <Text style={styles.listText}>Type: {item.status}</Text>
             </View>
           )}
-          keyExtractor={(text) => text.id}
+          keyExtractor={(joke) => joke.id}
         />
       </View>
     </SafeAreaView>
@@ -136,22 +119,12 @@ export default function PingScreen() {
 }
 
 const styles = StyleSheet.create({
+  container: { padding: 16 },
   listText: {
     fontSize: 16,
     color: 'white'
   },
-  buttonText: {
-    fontSize: 24,
-    color: 'white',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    top: Platform.OS === 'ios' ? 10 : 0
-  },
-  viewButton: {
-    minHeight: 50,
-    borderRadius: 15,
-    margin: 2
-  },
+
   item: {
     padding: 10,
     fontSize: 28,
@@ -159,6 +132,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10
   },
   text: {
+    marginBottom: 16,
     top: 10,
     color: 'white',
     backgroundColor: '#0000',
@@ -166,12 +140,6 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     fontWeight: 'bold',
     textAlign: 'center'
-  },
-  input: {
-    margin: 20,
-    borderWidth: 2,
-    padding: 20,
-    color: '#ffff'
   }
 })
 
@@ -179,7 +147,7 @@ const options = StyleSheet.create({
   container: {
     alignSelf: 'center',
     backgroundColor: '#0000',
-    padding: 5,
+    padding: 8,
     borderRadius: 5,
     width: 200
   },
