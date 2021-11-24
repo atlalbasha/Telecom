@@ -97,10 +97,11 @@ const SettingsScreen = ({ navigation }) => {
           min={0}
         />
 
-        <ButtonStyle title="Save" onPress={setColors} />
+        <ButtonStyle canSend={true} title="Save" onPress={setColors} />
 
         <ButtonStyle
           title="Go Back"
+          canSend={true}
           onPress={() => navigation.navigate('Map')}
         />
       </View>
@@ -112,7 +113,7 @@ export default SettingsScreen
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    padding: 16,
     backgroundColor: '#252b41',
     height: '100%'
   },
