@@ -1,27 +1,23 @@
-import { stopLocationUpdatesAsync } from "expo-location";
-import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { BarChart, Grid } from "react-native-svg-charts";
+import { stopLocationUpdatesAsync } from 'expo-location'
+import React, { useState, useEffect } from 'react'
+import { StyleSheet, Text, View } from 'react-native'
+import { BarChart, Grid } from 'react-native-svg-charts'
 
 const SignalInfo = ({ strength, frequency, isActive }) => {
-  const color = "rgb(116, 165, 127)";
+  const color = 'rgb(116, 165, 127)'
 
-  const [data, setData] = useState([]);
-  const newArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  const [data, setData] = useState([
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+  ])
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      checkData();
-      let rNumber = Math.floor(Math.random() * 100) + 1;
-      newArray.push(rNumber);
-      setData(newArray);
-    }, 2000);
-    return () => clearInterval(interval);
-  }, []);
+    checkData()
+    setData((prevValue) => [...prevValue, strength])
+  }, [strength])
 
   function checkData() {
-    if (newArray.length >= 20) {
-      newArray.shift();
+    if (data.length >= 20) {
+      data.shift()
     }
   }
 
@@ -44,25 +40,25 @@ const SignalInfo = ({ strength, frequency, isActive }) => {
         <Grid belowChart={true} />
       </BarChart>
     </View>
-  );
-};
+  )
+}
 
-export default SignalInfo;
+export default SignalInfo
 
 const styles = StyleSheet.create({
   row: {
-    flexDirection: "column",
+    flexDirection: 'column',
     marginBottom: 8,
     padding: 8,
-    backgroundColor: "#3b4053",
-    borderRadius: 8,
+    backgroundColor: '#3b4053',
+    borderRadius: 8
   },
   text: {
-    color: "white",
+    color: 'white'
   },
   textBig: {
     fontSize: 30,
-    fontWeight: "bold",
-    color: "#74A57F",
-  },
-});
+    fontWeight: 'bold',
+    color: '#74A57F'
+  }
+})

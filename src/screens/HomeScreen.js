@@ -10,14 +10,18 @@ import { DataContext } from './shared/utils/DataContext'
 
 const HomeScreen = () => {
   const { data } = useContext(DataContext)
-
   const [dataValues, setDataValues] = data
+  const [randomNumber, setRandomNumber] = useState(0)
 
   const [netInfoData, setNetInfoData] = useState()
   const [location, setLocation] = useState(null)
   //SWITCH
   const [isEnabled, setIsEnabled] = useState(true)
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState)
+
+  const getRandomNumber = () => {
+    setRandomNumber(Math.floor(Math.random() * 100) + 1)
+  }
 
   useEffect(async () => {
     let { status } = await Location.requestForegroundPermissionsAsync()
@@ -31,25 +35,30 @@ const HomeScreen = () => {
       setNetInfoData(state)
     })
 
-    await Location.watchPositionAsync(
-      {
-        accuracy: Location.Accuracy.Highest,
-        distanceInterval: 1,
-        timeInterval: 1000
-      },
-      (loc) => {
-        setLocation(loc)
-        setDataValues((prevLocation) => [
-          ...prevLocation,
-          {
-            longitude: loc.coords.longitude,
-            latitude: loc.coords.latitude,
-            weight: 20
-          }
-        ])
-      }
-    )
-  }, [])
+    console.log(isEnabled)
+    if (isEnabled === true) {
+      console.log(isEnabled)
+      await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.Highest,
+          distanceInterval: 1,
+          timeInterval: 1000
+        },
+        (loc) => {
+          setLocation(loc)
+          getRandomNumber()
+          setDataValues((prevLocation) => [
+            ...prevLocation,
+            {
+              longitude: loc.coords.longitude,
+              latitude: loc.coords.latitude,
+              weight: randomNumber
+            }
+          ])
+        }
+      )
+    }
+  }, [isEnabled])
 
   return (
     <SafeAreaView>
@@ -63,7 +72,7 @@ const HomeScreen = () => {
         />
         <SignalInfo
           isActive={isEnabled}
-          strength={netInfoData?.details.strength}
+          strength={randomNumber}
           frequency={netInfoData?.details.frequency}
         />
         <NetworkInfo
