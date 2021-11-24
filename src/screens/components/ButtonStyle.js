@@ -1,18 +1,21 @@
 import React from 'react'
-import { Button } from 'react-native-paper'
-import { StyleSheet, Text, View } from 'react-native'
+
+import { StyleSheet, Text, View, Pressable } from 'react-native'
 
 const ButtonStyle = (props) => {
   return (
     <View style={styles.container}>
-      <Button
-        mode="contained"
-        color="#74A57F"
-        dark={true}
+      <Pressable
+        disabled={!props.canSend}
+        style={props.canSend ? styles.button : styles.buttonDisabled}
         onPress={props.onPress}
       >
-        {props.title}
-      </Button>
+        <Text
+          style={props.canSend ? styles.buttonText : styles.buttonTextDisabled}
+        >
+          {props.title}
+        </Text>
+      </Pressable>
     </View>
   )
 }
@@ -20,5 +23,29 @@ const ButtonStyle = (props) => {
 export default ButtonStyle
 
 const styles = StyleSheet.create({
-  container: { marginBottom: 20 }
+  container: { marginBottom: 8 },
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 8,
+    elevation: 0,
+    backgroundColor: '#0496FF'
+  },
+  buttonDisabled: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 8,
+    elevation: 0,
+    backgroundColor: '#3B4053'
+  },
+  buttonText: {
+    color: 'white'
+  },
+  buttonTextDisabled: {
+    color: 'grey'
+  }
 })

@@ -16,6 +16,10 @@ import getCurrentTime from './shared/utils/currentTime'
 import CustomAlert from './components/CustomAlert'
 import ListItem from './components/ListItem'
 
+import ButtonStyle from './components/ButtonStyle'
+import CustomInput from './components/CustomInput'
+
+
 const LogScreen = () => {
   const { data } = useContext(DataContext)
   const [serverUrl, onChangeText] = useState('')
@@ -164,9 +168,11 @@ const LogScreen = () => {
       <View style={styles.container}>
         <Text style={styles.textHeader}>Logs</Text>
 
-        <Pressable style={styles.button} onPress={createUserDocument}>
-          <Text style={styles.buttonText}>Generate new log file</Text>
-        </Pressable>
+        <ButtonStyle
+          title="Generate new log file"
+          onPress={createUserDocument}
+          canSend={true}
+        />
 
         <FlatList
           data={filesUri}
@@ -179,23 +185,13 @@ const LogScreen = () => {
         <Text style={styles.whiteText}>
           Selected files: {currentSelectedUri.length}
         </Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={onChangeText}
-          value={serverUrl}
-          placeholder="https://"
-          keyboardType="default"
-        />
+        <CustomInput onChangeText={onChangeText} value={serverUrl} />
 
-        <Pressable
-          disabled={!canSend}
-          style={canSend ? styles.button : styles.buttonDisabled}
+        <ButtonStyle
+          title="Upload log"
           onPress={uploadDocument}
-        >
-          <Text style={canSend ? styles.buttonText : styles.buttonTextDisabled}>
-            Upload log
-          </Text>
-        </Pressable>
+          canSend={canSend}
+        />
 
         {/* CUSTOM ALERTS */}
         <CustomAlert
