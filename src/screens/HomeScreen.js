@@ -9,9 +9,11 @@ import LocationInfo from './components/LocationInfo'
 import { DataContext } from './shared/utils/DataContext'
 
 const HomeScreen = () => {
+
   const { data } = useContext(DataContext)
 
   const [dataValues, setDataValues] = data
+
 
   const [netInfoData, setNetInfoData] = useState()
   const [location, setLocation] = useState(null)
@@ -34,12 +36,16 @@ const HomeScreen = () => {
     await Location.watchPositionAsync(
       {
         accuracy: Location.Accuracy.Highest,
+
         distanceInterval: 1,
+
         timeInterval: 1000
       },
       (loc) => {
         setLocation(loc)
+
         setDataValues((prevLocation) => [
+
           ...prevLocation,
           {
             longitude: loc.coords.longitude,
