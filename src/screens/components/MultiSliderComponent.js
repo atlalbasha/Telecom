@@ -7,8 +7,8 @@ const MultiSliderComponent = (props) => {
   return (
     <View>
       <View style={styles.label}>
-        <Text style={styles.textcolor}>{props.label}</Text>
-        <Text style={styles.textcolor}>{props.value / 10}</Text>
+        <Text style={styles.labelColor}>{props.label}</Text>
+        <Text style={styles.labelColor}>{props.value / 10}</Text>
       </View>
 
       <MultiSlider
@@ -41,10 +41,9 @@ const styles = StyleSheet.create({
   label: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingRight: '5%',
-    marginBottom: -10
+    paddingRight: '5%'
   },
-  textcolor: {
+  labelColor: {
     color: 'white'
   }
 })
