@@ -10,13 +10,25 @@ import { Menu, MenuItem, MenuDivider } from 'react-native-material-menu'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { useContext } from 'react'
-export default function App() {
-  const [customMapStyle, setCustomMapStyle] = useState([])
-  const [data, setData] = useContext(DataContext)
-  const [visible, setVisible] = useState(false)
 
-  const areaColors = ['green', 'orange', 'red']
-  const startPoints = [0.01, 0.5, 0.75]
+export default function App({ navigation }) {
+  const [customMapStyle, setCustomMapStyle] = useState(mapStyle)
+  const { data, colors } = useContext(DataContext)
+
+  const [dataValues, setDataValues] = data
+  const [colorsValues, setColorsValues] = colors
+
+  const areaColors = [
+    '#5F5F5F',
+    '#F8050C',
+    '#E5845C',
+    '#F1F805',
+    '#76FFA0',
+    '#01521A'
+  ]
+  const startPoints = [0.1, 0.2, 0.3, 0.4, 0.5, 0.9]
+
+ 
   const changeTheme = () => {
     setCustomMapStyle(mapStyle)
   }
@@ -30,6 +42,7 @@ export default function App() {
   const hideMenu = () => setVisible(false)
 
   return (
+
     <SafeAreaView>
       <View>
         <Appbar style={styles.header}>
@@ -54,6 +67,10 @@ export default function App() {
             <MenuDivider />
             <MenuItem onPress={changeThemeStandard}>Standard</MenuItem>
           </Menu>
+ <Appbar.Action
+          icon="tune"
+          onPress={() => navigation.navigate('Settings')}
+        />
         </Appbar>
         <MapView
           style={{ flex: 1 }}
@@ -68,17 +85,22 @@ export default function App() {
           }}
         >
           <Heatmap
-            points={data}
-            opacity={1}
-            radius={20}
-            maxIntensity={100}
-            gradientSmoothing={10}
-            heatmapMode={'POINTS_DENSITY'}
-            gradient={{ colors: areaColors, startPoints }}
-          ></Heatmap>
+          points={dataValues}
+          opacity={1}
+          radius={20}
+          maxIntensity={100}
+          gradientSmoothing={10}
+          heatmapMode={'POINTS_DENSITY'}
+          gradient={{
+            colors: areaColors,
+            startPoints: colorsValues,
+            colorMapSize: 256
+          }}
+        ></Heatmap>
         </MapView>
       </View>
     </SafeAreaView>
+
   )
 }
 

@@ -9,7 +9,12 @@ import LocationInfo from './components/LocationInfo'
 import { DataContext } from './shared/utils/DataContext'
 
 const HomeScreen = () => {
-  const [data, setData] = useContext(DataContext)
+
+  const { data } = useContext(DataContext)
+
+  const [dataValues, setDataValues] = data
+
+
   const [netInfoData, setNetInfoData] = useState()
   const [location, setLocation] = useState(null)
   //SWITCH
@@ -31,12 +36,16 @@ const HomeScreen = () => {
     await Location.watchPositionAsync(
       {
         accuracy: Location.Accuracy.Highest,
-        distanceInterval: 2,
+
+        distanceInterval: 1,
+
         timeInterval: 1000
       },
       (loc) => {
         setLocation(loc)
-        setData((prevLocation) => [
+
+        setDataValues((prevLocation) => [
+
           ...prevLocation,
           {
             longitude: loc.coords.longitude,
@@ -67,8 +76,8 @@ const HomeScreen = () => {
           isActive={isEnabled}
           type={netInfoData?.type}
           isConnected={netInfoData?.isConnected.toString()}
-          isInternetReachable={netInfoData?.isInternetReachable.toString()}
-          isWifiEnabled={netInfoData?.isWifiEnabled.toString()}
+          isInternetReachable={true} //netInfoData?.isInternetReachable.toString()}
+          isWifiEnabled={true} //netInfoData?.isWifiEnabled.toString()}
           ssid={netInfoData?.details.ssid}
           ipAddress={netInfoData?.details.ipAddress}
           subnet={netInfoData?.details.subnet}
