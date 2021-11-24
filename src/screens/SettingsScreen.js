@@ -1,8 +1,10 @@
 import React, { useState, useContext } from 'react'
-import { StyleSheet, Text, View, Button } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MultiSliderComponent from './components/MultiSliderComponent'
 import { DataContext } from './shared/utils/DataContext'
+
+import ButtonStyle from './components/ButtonStyle'
 
 const SettingsScreen = ({ navigation }) => {
   const [darkGreenValues, setDarkGreenValues] = useState([90])
@@ -17,7 +19,6 @@ const SettingsScreen = ({ navigation }) => {
   const [colorsValues, setColorsValues] = colors
 
   const setDarkGreen = (value) => {
-
     setDarkGreenValues(Number(value))
   }
   const setLightGreen = (value) => {
@@ -52,7 +53,7 @@ const SettingsScreen = ({ navigation }) => {
   return (
     <SafeAreaView>
       <View style={styles.container}>
-        <View></View>
+        <Text style={styles.textHeader}>Change colors</Text>
         <MultiSliderComponent
           label={'Dark Green'}
           value={darkGreenValues}
@@ -95,8 +96,13 @@ const SettingsScreen = ({ navigation }) => {
           max={10}
           min={0}
         />
-        <Button title={'Save'} onPress={setColors} />
-        <Button title={'Go Back'} onPress={() => navigation.navigate('Map')} />
+
+        <ButtonStyle title="Save" onPress={setColors} />
+
+        <ButtonStyle
+          title="Go Back"
+          onPress={() => navigation.navigate('Map')}
+        />
       </View>
     </SafeAreaView>
   )
@@ -106,6 +112,13 @@ export default SettingsScreen
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20
+    padding: 20,
+    backgroundColor: '#252b41',
+    height: '100%'
+  },
+  textHeader: {
+    color: 'white',
+    fontSize: 40,
+    marginBottom: 20
   }
 })
