@@ -60,6 +60,7 @@ const SettingsScreen = ({ navigation }) => {
           onValuesChange={setDarkGreen}
           max={100}
           min={80}
+          color={'#01521A'}
         />
         <MultiSliderComponent
           label={'Light Green'}
@@ -67,6 +68,7 @@ const SettingsScreen = ({ navigation }) => {
           onValuesChange={setLightGreen}
           max={80}
           min={60}
+          color={'#76FFA0'}
         />
         <MultiSliderComponent
           label={'Yellow'}
@@ -74,6 +76,7 @@ const SettingsScreen = ({ navigation }) => {
           onValuesChange={setYellow}
           max={60}
           min={40}
+          color={'#F1F805'}
         />
         <MultiSliderComponent
           label={'Orange'}
@@ -81,6 +84,7 @@ const SettingsScreen = ({ navigation }) => {
           onValuesChange={setOrange}
           max={40}
           min={20}
+          color={'#E5845C'}
         />
         <MultiSliderComponent
           label={'Red '}
@@ -88,6 +92,7 @@ const SettingsScreen = ({ navigation }) => {
           onValuesChange={setRed}
           max={20}
           min={10}
+          color={'#F8050C'}
         />
         <MultiSliderComponent
           label={'Grey'}
@@ -95,6 +100,7 @@ const SettingsScreen = ({ navigation }) => {
           onValuesChange={setGrey}
           max={10}
           min={0}
+          color={'#5F5F5F'}
         />
 
         <ButtonStyle canSend={true} title="Save" onPress={setColors} />

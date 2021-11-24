@@ -1,6 +1,7 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import MultiSlider from '@ptomasroos/react-native-multi-slider'
+import CustomMarker from './CustomMarker'
 
 const MultiSliderComponent = (props) => {
   return (
@@ -18,6 +19,17 @@ const MultiSliderComponent = (props) => {
         min={props.min}
         max={props.max}
         step={1}
+        selectedStyle={{
+          backgroundColor: props.color
+        }}
+        unselectedStyle={{
+          backgroundColor: 'silver'
+        }}
+        trackStyle={{
+          height: 8,
+          backgroundColor: 'red'
+        }}
+        customMarker={CustomMarker}
       />
     </View>
   )
