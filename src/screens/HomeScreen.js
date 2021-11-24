@@ -9,9 +9,11 @@ import LocationInfo from './components/LocationInfo'
 import { DataContext } from './shared/utils/DataContext'
 
 const HomeScreen = () => {
+
   const { data } = useContext(DataContext)
   const [dataValues, setDataValues] = data
   const [randomNumber, setRandomNumber] = useState(0)
+
 
   const [netInfoData, setNetInfoData] = useState()
   const [location, setLocation] = useState(null)
