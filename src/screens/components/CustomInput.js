@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, TextInput } from 'react-native'
+import { StyleSheet, View, TextInput, Platform } from 'react-native'
 
 const CustomInput = (props) => {
   return (
@@ -9,7 +9,7 @@ const CustomInput = (props) => {
         onChangeText={props.onChangeText}
         value={props.value}
         placeholder="https://"
-        keyboardType="default"
+        keyboardType={Platform.OS === 'ios' ? 'url' : 'default'}
       />
     </View>
   )
