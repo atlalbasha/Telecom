@@ -9,7 +9,7 @@ const CustomInput = (props) => {
         onChangeText={props.onChangeText}
         value={props.value}
         placeholder="https://"
-        keyboardType={Platform.OS === 'ios' ? 'url' : 'default'}
+        keyboardType="default"
       />
     </View>
   )
