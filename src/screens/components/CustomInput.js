@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, TextInput } from 'react-native'
+import { StyleSheet, View, TextInput, Platform } from 'react-native'
 
 const CustomInput = (props) => {
   return (

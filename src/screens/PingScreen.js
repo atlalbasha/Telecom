@@ -1,13 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react'
-import {
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  FlatList
-} from 'react-native'
+import React, { useState } from 'react'
+import { StyleSheet, Text, View, FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import axios from 'axios'
 import { Stopwatch } from 'react-native-stopwatch-timer'
@@ -24,7 +16,7 @@ export default function PingScreen() {
   const [resetStopwatch, setResetStopwatch] = useState(false)
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#14213d' }}>
+    <SafeAreaView>
       <View style={styles.container}>
         <View style={options.container}>
           <Text
@@ -67,12 +59,13 @@ export default function PingScreen() {
           }}
           title="Reset"
         />
-
         <FlatList
           data={result}
           renderItem={({ item }) => (
             <View style={styles.item}>
-              <Text style={styles.listText}>Type: {item.status}</Text>
+              <Text style={styles.listText}>
+                URL: {item.text} & code:{item.code}
+              </Text>
             </View>
           )}
           keyExtractor={(joke) => joke.id}
@@ -86,24 +79,27 @@ export default function PingScreen() {
       try {
         const response = await axios.get('http://' + url)
         setUrlResult(response.status)
+        setIsStopwatchStart(false)
         result.push({
           id: result.length,
-          status: response.status
+          text: url,
+          code: response.status
         })
-        // end timer when request finished
-        setIsStopwatchStart(false)
       } catch (error) {
         if (axios.isCancel(error)) {
           console.log('Data fetching cancelled')
         } else {
-          // Handle error
+          result.push({
+            id: result.length,
+            text: url,
+            code: error.toString()
+          })
           setUrlResult(error.toString())
           setResetStopwatch(false)
           setIsStopwatchStart(false)
         }
       }
     }
-
     searchApi()
     searchApi()
     searchApi()
@@ -111,20 +107,21 @@ export default function PingScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 16 },
+  container: {
+    height: '100%',
+    padding: 16,
+    backgroundColor: '#252b41'
+  },
   listText: {
     fontSize: 16,
     color: 'white'
   },
-
   item: {
-    padding: 10,
-    fontSize: 28,
-    paddingTop: 10,
-    paddingBottom: 10
+    flex: 1,
+    padding: 10
   },
   text: {
-    marginBottom: 16,
+    marginBottom: 10,
     top: 10,
     color: 'white',
     backgroundColor: '#0000',
