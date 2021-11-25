@@ -1,8 +1,9 @@
 {
   "expo": {
     "name": "Telecom",
-    "slug": "Telecom",
+    "slug": "telecom",
     "version": "1.0.0",
+    "description": "This is an app for mobile strengt and seeing the strength on a heatmap, with some ping requests and file saving",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -20,6 +21,8 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.Telecom.Ericsson",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
