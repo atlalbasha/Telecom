@@ -19,7 +19,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundelindentifier":"com.Telecom.Ericsson",
+      "bundleIdentifier":"com.Telecom.Ericsson",
       "buildNumber":"1.0.0"
     },
     "android": {
