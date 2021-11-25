@@ -116,13 +116,9 @@ export default function PingScreen() {
         }
       }
     }
-    for (let i = 0; i < 3; i++) {
-      searchApi()
-      alert(i + 1, ' Ping')
-    }
-    // searchApi()
-    // searchApi()
-    // searchApi()
+    searchApi()
+    searchApi()
+    searchApi()
   }
 }
 
