@@ -3,7 +3,7 @@
     "name": "Telecom",
     "slug": "telecom",
     "version": "1.0.0",
-    "description": "This is an app for mobile strengt and seeing the strength on a heatmap, with some ping requests and file saving",
+    "description": "This is an app for mobile strength and seeing the strength on a heatmap, with some ping requests and file saving",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
