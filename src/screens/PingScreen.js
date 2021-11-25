@@ -6,11 +6,13 @@ import { Stopwatch } from 'react-native-stopwatch-timer'
 
 import ButtonStyle from './components/ButtonStyle'
 import CustomInput from './components/CustomInput'
+import CustomAlert from './components/CustomAlert'
 
 export default function PingScreen() {
   const [urlResult, setUrlResult] = useState([])
   const [text, onTextChange] = useState('')
   const [totTime, setTime] = useState('')
+  const [myAlert, setMyAlert] = useState(false)
   let [result] = useState([])
 
   const [isStopwatchStart, setIsStopwatchStart] = useState(false)
@@ -30,12 +32,13 @@ export default function PingScreen() {
           <Text
             style={{
               textAlign: 'center',
+              fontStyle: 'italic',
               fontSize: 20,
               fontWeight: 'bold',
               color: 'white'
             }}
           >
-            Timer for request
+            Timer
           </Text>
           <View>
             <Stopwatch
@@ -45,6 +48,13 @@ export default function PingScreen() {
               reset={resetStopwatch}
               options={options}
               getTime={getFormattedTime}
+            />
+            <ButtonStyle
+              canSend={true}
+              onPress={() => {
+                setResetStopwatch(!resetStopwatch)
+              }}
+              title="Reset"
             />
           </View>
         </View>
@@ -64,7 +74,6 @@ export default function PingScreen() {
         <ButtonStyle
           canSend={true}
           onPress={() => {
-            setResetStopwatch(!resetStopwatch)
             result.push({
               id: result.length,
               text: text,
@@ -72,7 +81,7 @@ export default function PingScreen() {
               time: totTime
             })
           }}
-          title="Reset & Add time to list"
+          title="Add time to list"
         />
         <FlatList
           data={result}
@@ -90,6 +99,20 @@ export default function PingScreen() {
           )}
           keyExtractor={(joke) => joke.id}
         />
+
+        <CustomAlert
+          isShowing={myAlert}
+          title={'ERROR'}
+          message={
+            'Something went wrong! Check the call, example: Google.com..'
+          }
+          confirmText={'Okey'}
+          confirmButtonColor={'#DD6B55'}
+          showCancelButton={false}
+          onConfirm={() => {
+            setMyAlert(false)
+          }}
+        />
       </View>
     </SafeAreaView>
   )
@@ -104,12 +127,7 @@ export default function PingScreen() {
         if (axios.isCancel(error)) {
           console.log('Data fetching cancelled')
         } else {
-          result.push({
-            id: result.length,
-            text: url,
-            time: totTime,
-            code: error.toString()
-          })
+          setMyAlert(true)
           setUrlResult(error.toString())
           setResetStopwatch(false)
           setIsStopwatchStart(false)
