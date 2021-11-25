@@ -18,7 +18,9 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundelindentifier":"com.Telecom.Ericsson",
+      "buildNumber":"1.0.0"
     },
     "android": {
       "package": "com.Telecom.Ericsson",
