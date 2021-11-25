@@ -10,10 +10,18 @@ import CustomInput from './components/CustomInput'
 export default function PingScreen() {
   const [urlResult, setUrlResult] = useState([])
   const [text, onTextChange] = useState('')
+  const [totTime, setTime] = useState('')
   let [result] = useState([])
 
   const [isStopwatchStart, setIsStopwatchStart] = useState(false)
   const [resetStopwatch, setResetStopwatch] = useState(false)
+
+  function getFormattedTime(time) {
+    if (time.toString() !== '00:00:00:000') {
+      setTime(time.toString())
+      return totTime
+    }
+  }
 
   return (
     <SafeAreaView>
@@ -36,6 +44,7 @@ export default function PingScreen() {
               start={isStopwatchStart}
               reset={resetStopwatch}
               options={options}
+              getTime={getFormattedTime}
             />
           </View>
         </View>
@@ -56,15 +65,26 @@ export default function PingScreen() {
           canSend={true}
           onPress={() => {
             setResetStopwatch(!resetStopwatch)
+            result.push({
+              id: result.length,
+              text: text,
+              code: urlResult,
+              time: totTime
+            })
           }}
-          title="Reset"
+          title="Reset & Add time to list"
         />
         <FlatList
           data={result}
           renderItem={({ item }) => (
             <View style={styles.item}>
+              <Text
+                style={{ textAlign: 'center', fontSize: 20, color: '#ffff' }}
+              >
+                Time: {item.time}
+              </Text>
               <Text style={styles.listText}>
-                URL: {item.text} & code:{item.code}
+                Search: {item.text} & Code: {item.code}
               </Text>
             </View>
           )}
@@ -80,11 +100,6 @@ export default function PingScreen() {
         const response = await axios.get('http://' + url)
         setUrlResult(response.status)
         setIsStopwatchStart(false)
-        result.push({
-          id: result.length,
-          text: url,
-          code: response.status
-        })
       } catch (error) {
         if (axios.isCancel(error)) {
           console.log('Data fetching cancelled')
@@ -92,6 +107,7 @@ export default function PingScreen() {
           result.push({
             id: result.length,
             text: url,
+            time: totTime,
             code: error.toString()
           })
           setUrlResult(error.toString())
@@ -100,9 +116,13 @@ export default function PingScreen() {
         }
       }
     }
-    searchApi()
-    searchApi()
-    searchApi()
+    for (let i = 0; i < 3; i++) {
+      searchApi()
+      alert(i + 1, ' Ping')
+    }
+    // searchApi()
+    // searchApi()
+    // searchApi()
   }
 }
 
@@ -114,6 +134,7 @@ const styles = StyleSheet.create({
   },
   listText: {
     fontSize: 16,
+    textAlign: 'center',
     color: 'white'
   },
   item: {
